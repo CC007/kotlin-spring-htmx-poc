@@ -40,13 +40,11 @@ class HtmlTag private constructor(
     }
 
     class Builder(
-        var name: String,
-        var attributes: MutableMap<String, String> = mutableMapOf(),
-        var childElements: MutableList<HtmlElement> = mutableListOf(),
+        private val name: String,
+        private val attributes: MutableMap<String, String> = mutableMapOf(),
+        private val childElements: MutableList<HtmlElement> = mutableListOf(),
         var selfClosing: Boolean = false
     ) {
-
-
         fun attribute(attribute: Pair<String, String>) {
             attributes += attribute
         }
@@ -71,5 +69,5 @@ fun HtmlTag.Builder.text(text: String) = element { indent -> "$indent$text" }
 
 fun HtmlTag.Builder.tag(
     name: String,
-    configure: HtmlTag.Builder.() -> Unit
+    configure: HtmlTag.Builder.() -> Unit = { }
 ) = element(HtmlTag.Builder(name).apply(configure).build())
