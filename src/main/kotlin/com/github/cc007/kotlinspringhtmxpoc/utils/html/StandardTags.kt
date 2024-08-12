@@ -1,25 +1,67 @@
 package com.github.cc007.kotlinspringhtmxpoc.utils.html
 
-fun HtmlTag.Builder.body(
-    configure: HtmlTag.Builder.() -> Unit = {}
-) = tag("body", configure)
+import com.github.cc007.kotlinspringhtmxpoc.utils.html.HtmlTag.Builder
 
-fun HtmlTag.Builder.div(
-    configure: HtmlTag.Builder.() -> Unit = {}
-) = tag("div", configure)
+val Builder.head by BuilderDelegate
 
-fun HtmlTag.Builder.br() = tag("br") {
-    selfClosing = true
+object head {
+    val Builder.title by BuilderDelegate
+
+    interface InvokableScript {
+        operator fun invoke(
+            src: String,
+            configure: Builder.() -> Unit = {},
+        )
+    }
+
+    val Builder.script
+        get() = object : InvokableScript {
+            override fun invoke(
+                src: String,
+                configure: Builder.() -> Unit,
+            ) {
+                tag("script") {
+                    attribute("src" to src)
+                    configure()
+                }
+            }
+        }
 }
 
-fun HtmlTag.Builder.p(
-    configure: HtmlTag.Builder.() -> Unit = {}
-) = tag("p", configure)
+val Builder.body by BuilderDelegate
 
-fun HtmlTag.Builder.a(
-    href: String,
-    configure: HtmlTag.Builder.() -> Unit = {}
-) = tag("a") {
-    attribute("href" to href)
-    configure()
+object body {
+    val Builder.div by BuilderDelegate
+    val Builder.h1 by BuilderDelegate
+    val Builder.h2 by BuilderDelegate
+    val Builder.h3 by BuilderDelegate
+    val Builder.h4 by BuilderDelegate
+    val Builder.h5 by BuilderDelegate
+    val Builder.h6 by BuilderDelegate
+    val Builder.p by BuilderDelegate
+
+    val Builder.br
+        get() = tag("br") {
+            selfClosing = true
+        }
+
+    interface InvokableA {
+        operator fun invoke(
+            href: String,
+            configure: Builder.() -> Unit,
+        )
+    }
+
+    val Builder.a
+        get() = object : InvokableA {
+            override fun invoke(
+                href: String,
+                configure: Builder.() -> Unit,
+            ) {
+                tag("a") {
+                    attribute("href" to href)
+                    configure()
+                }
+            }
+        }
 }

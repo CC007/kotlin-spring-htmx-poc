@@ -1,6 +1,8 @@
 package com.github.cc007.kotlinspringhtmxpoc.utils.html
 
+import com.github.cc007.kotlinspringhtmxpoc.utils.html.HtmlTag.Builder
 import uy.klutter.core.collections.asReadOnly
+import kotlin.reflect.KProperty
 
 var indentLength: Int = 4
 
@@ -53,21 +55,49 @@ class HtmlTag private constructor(
             childElements += child
         }
 
+        fun text(text: String? = null, textProvider: () -> String = { "" }) {
+            val usedText = text ?: textProvider()
+            element { indent -> "$indent$usedText" }
+        }
+
         fun build() =
             HtmlTag(name, attributes.asReadOnly(), childElements.asReadOnly(), selfClosing)
 
     }
 }
 
-fun html(configure: HtmlTag.Builder.() -> Unit): HtmlElement {
-    val builder = HtmlTag.Builder("html")
+interface Invokable {
+    operator fun invoke(configure: Builder.() -> Unit = {})
+}
+
+object BuilderDelegate {
+    operator fun getValue(
+        thisRef: Builder,
+        property: KProperty<*>
+    ): Invokable {
+        return object: Invokable {
+            override fun invoke(
+                configure: Builder.() -> Unit,
+            ) {
+                thisRef.tag(property.name, configure)
+            }
+        }
+    }
+}
+
+fun htmlTag(configure: Builder.() -> Unit): HtmlElement {
+    val builder = Builder("html")
     builder.configure()
     return builder.build()
 }
 
-fun HtmlTag.Builder.text(text: String) = element { indent -> "$indent$text" }
+fun html(configure: Builder.() -> Unit): String {
+    val builder = Builder("html")
+    builder.configure()
+    return builder.build().stringify
+}
 
-fun HtmlTag.Builder.tag(
+fun Builder.tag(
     name: String,
-    configure: HtmlTag.Builder.() -> Unit = { }
-) = element(HtmlTag.Builder(name).apply(configure).build())
+    configure: Builder.() -> Unit = { }
+) = element(Builder(name).apply(configure).build())
