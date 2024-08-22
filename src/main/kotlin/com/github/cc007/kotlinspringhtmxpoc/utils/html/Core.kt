@@ -84,6 +84,23 @@ object BuilderDelegate {
         }
     }
 }
+object SelfClosingBuilderDelegate {
+    operator fun getValue(
+        thisRef: Builder,
+        property: KProperty<*>
+    ): Invokable {
+        return object: Invokable {
+            override fun invoke(
+                configure: Builder.() -> Unit,
+            ) {
+                thisRef.tag(property.name) {
+                    selfClosing = true
+                    configure()
+                }
+            }
+        }
+    }
+}
 
 fun htmlTag(configure: Builder.() -> Unit): HtmlElement {
     val builder = Builder("html")
