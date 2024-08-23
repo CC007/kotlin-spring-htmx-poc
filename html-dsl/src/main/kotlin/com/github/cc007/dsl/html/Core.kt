@@ -2,7 +2,6 @@ package com.github.cc007.dsl.html
 
 import com.github.cc007.dsl.html.HtmlTag.Builder
 import uy.klutter.core.collections.asReadOnly
-import kotlin.reflect.KProperty
 
 var indentLength: Int = 4
 
@@ -65,61 +64,35 @@ class HtmlTag private constructor(
             element { indent -> "$indent$usedText" }
         }
 
+        fun tag(name: String, configure: Builder.() -> Unit = { }): HtmlElement {
+            val child = Builder(name).apply(configure).build()
+            element(child)
+            return child
+        }
+
+        fun replaceTag(
+            oldTag: HtmlElement,
+            name: String,
+            configure: Builder.() -> Unit = { }
+        ) = replaceElement(oldTag, Builder(name).apply(configure).build())
+
         fun build() =
             HtmlTag(name, attributes.asReadOnly(), childElements.asReadOnly(), selfClosing)
 
     }
 }
 
-interface Invokable {
-    operator fun invoke(configure: Builder.() -> Unit = {})
-}
-
-object BuilderDelegate {
-    operator fun getValue(thisRef: Builder, property: KProperty<*>): Invokable {
-        val tag = thisRef.tag(property.name)
-        return object : Invokable {
-            override fun invoke(configure: Builder.() -> Unit) {
-                thisRef.replaceTag(tag, property.name, configure)
-            }
-        }
-    }
-}
-
-object SelfClosingBuilderDelegate {
-    operator fun getValue(thisRef: Builder, property: KProperty<*>): Invokable {
-        val tag = thisRef.tag(property.name) { selfClosing = true }
-        return object : Invokable {
-            override fun invoke(configure: Builder.() -> Unit) {
-                thisRef.replaceTag(tag, property.name) {
-                    selfClosing = true
-                    configure()
-                }
-            }
-        }
-    }
-}
-
-fun htmlTag(configure: Builder.() -> Unit): HtmlElement {
-    val builder = Builder("html")
+fun tag(name: String, configure: Builder.() -> Unit = {}): HtmlElement {
+    val builder = Builder(name)
     builder.configure()
     return builder.build()
 }
 
+fun htmlTag(configure: Builder.() -> Unit): HtmlElement {
+    return tag("html", configure)
+}
+
 fun html(configure: Builder.() -> Unit): String {
-    val builder = Builder("html")
-    builder.configure()
-    return builder.build().stringify
+    return htmlTag(configure).stringify
 }
 
-fun Builder.tag(name: String, configure: Builder.() -> Unit = { }): HtmlElement {
-    val child = Builder(name).apply(configure).build()
-    element(child)
-    return child
-}
-
-fun Builder.replaceTag(
-    oldTag: HtmlElement,
-    name: String,
-    configure: Builder.() -> Unit = { }
-) = replaceElement(oldTag, Builder(name).apply(configure).build())
