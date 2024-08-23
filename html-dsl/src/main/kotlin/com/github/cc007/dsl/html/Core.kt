@@ -55,6 +55,11 @@ class HtmlTag private constructor(
             childElements += child
         }
 
+        fun replaceLastElement(child: HtmlElement) {
+            childElements.removeLast()
+            childElements += child
+        }
+
         fun text(text: String? = null, textProvider: () -> String = { "" }) {
             val usedText = text ?: textProvider()
             element { indent -> "$indent$usedText" }
@@ -71,29 +76,21 @@ interface Invokable {
 }
 
 object BuilderDelegate {
-    operator fun getValue(
-        thisRef: Builder,
-        property: KProperty<*>
-    ): Invokable {
-        return object: Invokable {
-            override fun invoke(
-                configure: Builder.() -> Unit,
-            ) {
+    operator fun getValue(thisRef: Builder, property: KProperty<*>): Invokable {
+        return object : Invokable {
+            override fun invoke(configure: Builder.() -> Unit) {
                 thisRef.tag(property.name, configure)
             }
         }
     }
 }
+
 object SelfClosingBuilderDelegate {
-    operator fun getValue(
-        thisRef: Builder,
-        property: KProperty<*>
-    ): Invokable {
-        return object: Invokable {
-            override fun invoke(
-                configure: Builder.() -> Unit,
-            ) {
-                thisRef.tag(property.name) {
+    operator fun getValue(thisRef: Builder, property: KProperty<*>): Invokable {
+        thisRef.tag(property.name) { selfClosing = true }
+        return object : Invokable {
+            override fun invoke(configure: Builder.() -> Unit) {
+                thisRef.replaceLastTag(property.name) {
                     selfClosing = true
                     configure()
                 }
@@ -118,3 +115,8 @@ fun Builder.tag(
     name: String,
     configure: Builder.() -> Unit = { }
 ) = element(Builder(name).apply(configure).build())
+
+fun Builder.replaceLastTag(
+    name: String,
+    configure: Builder.() -> Unit = { }
+) = replaceLastElement(Builder(name).apply(configure).build())

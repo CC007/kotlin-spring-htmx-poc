@@ -17,7 +17,7 @@ object page {
         }
         p {
             text("Lorum ipsum")
-            br {}
+            br
             a("http://duckduckgo.com") {
                 text("Go to search")
             }
