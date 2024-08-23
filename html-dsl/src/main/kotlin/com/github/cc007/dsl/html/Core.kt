@@ -55,8 +55,8 @@ class HtmlTag private constructor(
             childElements += child
         }
 
-        fun replaceLastElement(child: HtmlElement) {
-            childElements.removeLast()
+        fun replaceElement(oldChild: HtmlElement, child: HtmlElement) {
+            childElements -= oldChild
             childElements += child
         }
 
@@ -77,9 +77,10 @@ interface Invokable {
 
 object BuilderDelegate {
     operator fun getValue(thisRef: Builder, property: KProperty<*>): Invokable {
+        val tag = thisRef.tag(property.name)
         return object : Invokable {
             override fun invoke(configure: Builder.() -> Unit) {
-                thisRef.tag(property.name, configure)
+                thisRef.replaceTag(tag, property.name, configure)
             }
         }
     }
@@ -87,10 +88,10 @@ object BuilderDelegate {
 
 object SelfClosingBuilderDelegate {
     operator fun getValue(thisRef: Builder, property: KProperty<*>): Invokable {
-        thisRef.tag(property.name) { selfClosing = true }
+        val tag = thisRef.tag(property.name) { selfClosing = true }
         return object : Invokable {
             override fun invoke(configure: Builder.() -> Unit) {
-                thisRef.replaceLastTag(property.name) {
+                thisRef.replaceTag(tag, property.name) {
                     selfClosing = true
                     configure()
                 }
@@ -111,12 +112,14 @@ fun html(configure: Builder.() -> Unit): String {
     return builder.build().stringify
 }
 
-fun Builder.tag(
-    name: String,
-    configure: Builder.() -> Unit = { }
-) = element(Builder(name).apply(configure).build())
+fun Builder.tag(name: String, configure: Builder.() -> Unit = { }): HtmlElement {
+    val child = Builder(name).apply(configure).build()
+    element(child)
+    return child
+}
 
-fun Builder.replaceLastTag(
+fun Builder.replaceTag(
+    oldTag: HtmlElement,
     name: String,
     configure: Builder.() -> Unit = { }
-) = replaceLastElement(Builder(name).apply(configure).build())
+) = replaceElement(oldTag, Builder(name).apply(configure).build())
