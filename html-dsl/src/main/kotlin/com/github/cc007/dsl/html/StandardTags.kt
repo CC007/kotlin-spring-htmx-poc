@@ -1,6 +1,6 @@
-package com.github.cc007.kotlinspringhtmxpoc.utils.html
+package com.github.cc007.dsl.html
 
-import com.github.cc007.kotlinspringhtmxpoc.utils.html.HtmlTag.Builder
+import com.github.cc007.dsl.html.HtmlTag.Builder
 
 val Builder.head by BuilderDelegate
 
