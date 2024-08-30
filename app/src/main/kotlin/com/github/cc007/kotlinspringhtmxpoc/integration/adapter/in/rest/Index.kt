@@ -27,11 +27,12 @@ class Index {
         title("Hello World")
     }
 
+    /**
+     * html using configuration. This doesn't enforce the use of the head and body tag
+     */
     private fun pageResponse() = html {
         head {
-            title("Hello World") {
-                text("!")
-            }
+            title("Hello World")
             script("https://unpkg.com/htmx.org@1.9.12/dist/htmx.min.js")
             script("https://unpkg.com/htmx.org@1.9.12/dist/ext/response-targets.js")
             script("https://unpkg.com/htmx.org@1.9.12/dist/ext/preload.js")
@@ -41,4 +42,34 @@ class Index {
             App()
         }
     }
+
+    /**
+     * html using head and body, with explicit parameter names
+     */
+//  private fun pageResponse2() = html(
+//      head = {
+//          title("Hello World")
+//          script("https://unpkg.com/htmx.org@1.9.12/dist/htmx.min.js")
+//          script("https://unpkg.com/htmx.org@1.9.12/dist/ext/response-targets.js")
+//          script("https://unpkg.com/htmx.org@1.9.12/dist/ext/preload.js")
+//          script("https://cdn.tailwindcss.com")
+//      },
+//      body = {
+//          App()
+//      }
+//  )
+
+
+    /**
+     * html using head and body, with implicit parameter names
+     */
+//  private fun pageResponse3() = html({
+//      title("Hello World")
+//      script("https://unpkg.com/htmx.org@1.9.12/dist/htmx.min.js")
+//      script("https://unpkg.com/htmx.org@1.9.12/dist/ext/response-targets.js")
+//      script("https://unpkg.com/htmx.org@1.9.12/dist/ext/preload.js")
+//      script("https://cdn.tailwindcss.com")
+//  }, {
+//      App()
+//  })
 }

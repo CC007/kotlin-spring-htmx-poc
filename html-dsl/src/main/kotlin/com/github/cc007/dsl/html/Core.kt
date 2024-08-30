@@ -1,6 +1,8 @@
 package com.github.cc007.dsl.html
 
 import com.github.cc007.dsl.html.HtmlTag.Builder
+import com.github.cc007.dsl.html.tag.body
+import com.github.cc007.dsl.html.tag.head
 import uy.klutter.core.collections.asReadOnly
 
 var indentLength: Int = 4
@@ -132,3 +134,13 @@ fun html(configure: Builder.() -> Unit): String {
     return htmlTag(configure).stringify
 }
 
+fun htmlTag(head: Builder.() -> Unit, body: Builder.() -> Unit): HtmlElement {
+    return tag("html") {
+        head(head)
+        body(body)
+    }
+}
+
+fun html(head: Builder.() -> Unit, body: Builder.() -> Unit): String {
+    return htmlTag(head, body).stringify
+}
