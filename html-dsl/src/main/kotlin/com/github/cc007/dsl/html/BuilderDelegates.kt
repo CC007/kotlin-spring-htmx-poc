@@ -7,7 +7,7 @@ interface Invokable {
 }
 
 object BuilderDelegate {
-    operator fun getValue(thisRef: HtmlTag.Builder, property: KProperty<*>): Invokable {
+    operator fun getValue(thisRef: BuilderWithTags, property: KProperty<*>): Invokable {
         val tag = thisRef.tag(property.name)
         return object : Invokable {
             override fun invoke(configure: HtmlTag.Builder.() -> Unit) {
@@ -18,7 +18,7 @@ object BuilderDelegate {
 }
 
 object SelfClosingBuilderDelegate {
-    operator fun getValue(thisRef: HtmlTag.Builder, property: KProperty<*>): Invokable {
+    operator fun getValue(thisRef: BuilderWithTags, property: KProperty<*>): Invokable {
         val tag = thisRef.tag(property.name) { selfClosing = true }
         return object : Invokable {
             override fun invoke(configure: HtmlTag.Builder.() -> Unit) {
@@ -30,3 +30,4 @@ object SelfClosingBuilderDelegate {
         }
     }
 }
+
