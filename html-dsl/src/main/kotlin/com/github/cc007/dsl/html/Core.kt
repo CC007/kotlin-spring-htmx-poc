@@ -14,20 +14,20 @@ fun interface HtmlElement {
 }
 
 interface BuilderWithTags {
-    fun tag(name: String, configure: HtmlTag.Builder.() -> Unit = { }): HtmlElement
-    fun replaceTag(oldTag: HtmlElement, name: String, configure: HtmlTag.Builder.() -> Unit = { })
+    fun tag(name: String, configure: Builder.() -> Unit = { }): HtmlElement
+    fun replaceTag(oldTag: HtmlElement, name: String, configure: Builder.() -> Unit = { })
 }
 
 class HtmlTag private constructor(
-    val name: String,
-    val attributes: Map<String, String>,
-    val children: List<HtmlElement>,
-    val selfClosing: Boolean
+    private val name: String,
+    private val attributes: Map<String, String?>,
+    private val children: List<HtmlElement>,
+    private val selfClosing: Boolean
 ) : HtmlElement {
 
     override fun render(indent: String): String {
         val attributeString = attributes.entries.joinToString(separator = " ") { (key, value) ->
-            "$key=\"$value\""
+            if (value == null) key else "$key=\"$value\""
         }.run {
             if (isEmpty()) "" else " $this"
         }
@@ -41,19 +41,19 @@ class HtmlTag private constructor(
             return "$indent<$name$attributeString></$name>"
         }
         return """
-            |$indent<$name$attributeString>
-            |$childrenString
-            |$indent</$name>
-        """.trimMargin()
+            ||$indent<$name$attributeString>
+            ||$childrenString
+            ||$indent</$name>
+        """.trimMargin("||")
     }
 
     class Builder(
         private val name: String,
-        private val attributes: MutableMap<String, String> = mutableMapOf(),
+        private val attributes: MutableMap<String, String?> = mutableMapOf(),
         private val children: MutableList<HtmlElement> = mutableListOf(),
         var selfClosing: Boolean = false
     ): BuilderWithTags {
-        fun attribute(attribute: Pair<String, String>) {
+        fun attribute(attribute: Pair<String, String?>) {
             attributes += attribute
         }
 
@@ -87,16 +87,21 @@ class HtmlTag private constructor(
     }
 }
 
-class NoRoot private constructor(private val children: List<HtmlElement>): HtmlElement {
+class NoRoot private constructor(
+    private val children: List<HtmlElement>,
+    private val includeDoctype: Boolean
+): HtmlElement {
 
     override fun render(indent: String): String {
-        return children.joinToString("\n") {
+        val htmlString = children.joinToString("\n") {
             it.render("")
         }
+        return if (includeDoctype) "<!DOCTYPE html>\n$htmlString" else htmlString
     }
 
     class Builder(
         private val childElements: MutableList<HtmlElement> = mutableListOf(),
+        var includeDoctype: Boolean = false
     ): BuilderWithTags {
         override fun tag(name: String, configure: HtmlTag.Builder.() -> Unit): HtmlElement {
             val tag = Builder(name).apply(configure).build()
@@ -110,7 +115,7 @@ class NoRoot private constructor(private val children: List<HtmlElement>): HtmlE
             childElements += tag
         }
 
-        fun build() = NoRoot(childElements.asReadOnly())
+        fun build() = NoRoot(childElements.asReadOnly(), includeDoctype)
     }
 }
 
@@ -120,14 +125,21 @@ fun tag(name: String, configure: Builder.() -> Unit = {}): HtmlElement {
     return builder.build()
 }
 
-fun noRoot(configure: NoRoot.Builder.() -> Unit = {}): String {
+fun noRootTag(configure: NoRoot.Builder.() -> Unit = {}): HtmlElement {
     val builder = NoRoot.Builder()
     builder.configure()
-    return builder.build().stringify
+    return builder.build()
+}
+
+fun noRoot(configure: NoRoot.Builder.() -> Unit = {}): String {
+    return noRootTag(configure).stringify
 }
 
 fun htmlTag(configure: Builder.() -> Unit): HtmlElement {
-    return tag("html", configure)
+    return noRootTag {
+        includeDoctype = true
+        tag("html", configure)
+    }
 }
 
 fun html(configure: Builder.() -> Unit): String {

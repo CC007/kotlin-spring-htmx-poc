@@ -1,0 +1,164 @@
+:root {
+    --body-margin: 8px;
+}
+
+* {
+    font-family: Bahnschrift, sans-serif;
+}
+
+body {
+    height: 100dvh;
+    margin: var(--body-margin);
+
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+header {
+    background-color: #f0f0f0;
+    padding: 5px 10px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+#content {
+    padding: 20px;
+
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+footer {
+    background-color: #f0f0f0;
+    padding: 5px 10px;
+
+    flex-shrink: 0;
+}
+
+
+/* header contents */
+
+#logo {
+    width: 40px;
+    height: 40px;
+    margin: 0 20px 0 0;
+}
+
+#logo img {
+    width: auto;
+    height: 100%;
+    padding: 0;
+    border-radius: 5px;
+}
+
+#menu {
+    background-color: #eaeaea;
+    border-radius: 5px;
+    padding: 5px;
+
+    display: flex;
+    align-items: center;
+}
+
+#menu > a {
+    padding: 5px 10px;
+    box-sizing: border-box;
+
+    flex-grow: 1;
+
+    color: #333;
+    text-decoration: none;
+    text-align: center;
+}
+
+#menu > a.active {
+    background-color: #e0e0e0;
+    border-radius: 5px;
+}
+
+
+/* Big Ben page styling */
+
+.card {
+    max-width: 600px;
+    width: 100%;
+    margin: 20px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+.card-body {
+    padding: 20px;
+}
+
+.media {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+}
+
+.media img {
+    width: 50px;
+    height: 50px;
+}
+.media-username {
+    margin: 0 auto;
+
+    color: #000;
+    font-weight: bold;
+ }
+
+.media-usertag {
+    margin: 0 auto;
+
+    color: #657786;
+    font-size: 14px;
+}
+
+.media-time {
+    margin-left: auto;
+
+    font-size: 0.8em;
+    color: #999;
+}
+
+.media-header {
+    width: 100%;
+
+    display: flex;
+}
+
+.media-icon,
+.media-info {
+    margin-right: 10px;
+
+    flex: 0 0 auto;
+}
+
+.media-body {
+    width: 100%;
+}
+
+.media-body p {
+    margin-top: 10px;
+
+    color: #000;
+    font-size: 15px;
+}
+
+.btn-group button {
+    margin-right: 10px;
+    border-color: #1DA1F2;
+
+    color: #1DA1F2;
+}
+
+.btn-group button:hover {
+    background-color: #1DA1F2;
+
+    color: #fff;
+}

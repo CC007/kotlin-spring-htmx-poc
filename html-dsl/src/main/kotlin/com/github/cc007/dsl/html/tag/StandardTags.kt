@@ -3,46 +3,35 @@ package com.github.cc007.dsl.html.tag
 import com.github.cc007.dsl.html.*
 import com.github.cc007.dsl.html.HtmlTag.Builder
 
-object noroot {
-    val NoRoot.Builder.div by BuilderDelegate
-    val NoRoot.Builder.span by BuilderDelegate
-    val NoRoot.Builder.h1 by BuilderDelegate
-    val NoRoot.Builder.h2 by BuilderDelegate
-    val NoRoot.Builder.h3 by BuilderDelegate
-    val NoRoot.Builder.h4 by BuilderDelegate
-    val NoRoot.Builder.h5 by BuilderDelegate
-    val NoRoot.Builder.h6 by BuilderDelegate
-    val NoRoot.Builder.p by BuilderDelegate
+val BuilderWithTags.script get() = scriptWithSrc()
 
-    val NoRoot.Builder.br by SelfClosingBuilderDelegate
-
-    val NoRoot.Builder.a get() = aWithHref()
-    val NoRoot.Builder.title get() = titleWithText()
-    val NoRoot.Builder.script get() = scriptWithSrc()
-}
-
-val Builder.script get() = scriptWithSrc()
-
-val Builder.head by BuilderDelegate
+val BuilderWithTags.head by BuilderDelegate
 object head {
-    val Builder.title get() = titleWithText()
+    val BuilderWithTags.meta by SelfClosingBuilderDelegate
+    val BuilderWithTags.link by SelfClosingBuilderDelegate
+    val BuilderWithTags.title get() = titleWithText()
+    val BuilderWithTags.style get() = cssLinkWithHref()
 }
 
-val Builder.body by BuilderDelegate
+val BuilderWithTags.body by BuilderDelegate
 object body {
-    val Builder.div by BuilderDelegate
-    val Builder.span by BuilderDelegate
-    val Builder.h1 by BuilderDelegate
-    val Builder.h2 by BuilderDelegate
-    val Builder.h3 by BuilderDelegate
-    val Builder.h4 by BuilderDelegate
-    val Builder.h5 by BuilderDelegate
-    val Builder.h6 by BuilderDelegate
-    val Builder.p by BuilderDelegate
+    val BuilderWithTags.div by BuilderDelegate
+    val BuilderWithTags.span by BuilderDelegate
+    val BuilderWithTags.h1 by BuilderDelegate
+    val BuilderWithTags.h2 by BuilderDelegate
+    val BuilderWithTags.h3 by BuilderDelegate
+    val BuilderWithTags.h4 by BuilderDelegate
+    val BuilderWithTags.h5 by BuilderDelegate
+    val BuilderWithTags.h6 by BuilderDelegate
+    val BuilderWithTags.p by BuilderDelegate
+    val BuilderWithTags.header by BuilderDelegate
+    val BuilderWithTags.section by BuilderDelegate
+    val BuilderWithTags.footer by BuilderDelegate
 
-    val Builder.br by SelfClosingBuilderDelegate
+    val BuilderWithTags.br by SelfClosingBuilderDelegate
+    val BuilderWithTags.img by SelfClosingBuilderDelegate
 
-    val Builder.a get() = aWithHref()
+    val BuilderWithTags.a get() = aWithHref()
 
 }
 
@@ -54,8 +43,16 @@ private fun BuilderWithTags.aWithHref() =
         }
     }
 
+private fun BuilderWithTags.cssLinkWithHref() =
+    InvokableWithHrefNoConf { href ->
+        tag("link") {
+            attribute("rel" to "stylesheet")
+            attribute("href" to href)
+        }
+    }
+
 private fun BuilderWithTags.titleWithText() =
-    object : InvokableWithTextNoConf {
+    object : InvokableWithTextOptConf {
         override fun invoke(
             text: String,
             configure: Builder.() -> Unit,
@@ -68,7 +65,7 @@ private fun BuilderWithTags.titleWithText() =
     }
 
 private fun BuilderWithTags.scriptWithSrc() =
-    object : InvokableWithSrcNoConf {
+    object : InvokableWithSrcOptConf {
         override fun invoke(
             src: String,
             configure: Builder.() -> Unit,
