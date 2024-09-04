@@ -1,6 +1,7 @@
 package com.github.cc007.kotlinspringhtmxpoc.integration.adapter.`in`.rest.components
 
 import com.github.cc007.dsl.html.HtmlTag
+import com.github.cc007.dsl.html.attr.classes
 import com.github.cc007.dsl.html.attr.id
 import com.github.cc007.dsl.html.tag.body
 import com.github.cc007.dsl.html.tag.body.section
@@ -24,10 +25,12 @@ fun HtmlTag.Builder.Page(title: String, content: HtmlTag.Builder.() -> Unit) {
         style("/css/styles.css")
     }
     body {
+        classes("h-dvh", "flex", "flex-col")
         attribute("hx-ext" to "response-targets, preload")
         Header()
         section {
             id("content")
+            classes("p-5", "grow", "overflow-y-auto")
             content()
         }
         Footer()

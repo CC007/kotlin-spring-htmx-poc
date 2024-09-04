@@ -52,23 +52,28 @@ class HtmlTag private constructor(
         private val attributes: MutableMap<String, String?> = mutableMapOf(),
         private val children: MutableList<HtmlElement> = mutableListOf(),
         var selfClosing: Boolean = false
-    ): BuilderWithTags {
+    ) : BuilderWithTags {
         fun attribute(attribute: Pair<String, String?>) {
             attributes += attribute
         }
 
-        fun child(child: HtmlElement) {
-            children += child
-        }
-
-        fun replaceChild(oldChild: HtmlElement, child: HtmlElement) {
-            children -= oldChild
-            children += child
+        fun appendAttribute(attribute: Pair<String, String?>, separator: String = " ") {
+            val oldValue = attributes[attribute.first]?.let { it + separator } ?: ""
+            attributes[attribute.first] = oldValue + attribute.second
         }
 
         fun text(text: String? = null, textProvider: () -> String = { "" }) {
             val usedText = text ?: textProvider()
             child { indent -> "$indent$usedText" }
+        }
+
+        private fun child(child: HtmlElement) {
+            children += child
+        }
+
+        private fun replaceChild(oldChild: HtmlElement, child: HtmlElement) {
+            children -= oldChild
+            children += child
         }
 
         override fun tag(name: String, configure: Builder.() -> Unit): HtmlElement {
@@ -90,7 +95,7 @@ class HtmlTag private constructor(
 class NoRoot private constructor(
     private val children: List<HtmlElement>,
     private val includeDoctype: Boolean
-): HtmlElement {
+) : HtmlElement {
 
     override fun render(indent: String): String {
         val htmlString = children.joinToString("\n") {
@@ -102,14 +107,18 @@ class NoRoot private constructor(
     class Builder(
         private val childElements: MutableList<HtmlElement> = mutableListOf(),
         var includeDoctype: Boolean = false
-    ): BuilderWithTags {
+    ) : BuilderWithTags {
         override fun tag(name: String, configure: HtmlTag.Builder.() -> Unit): HtmlElement {
             val tag = Builder(name).apply(configure).build()
             childElements += tag
             return tag
         }
 
-        override fun replaceTag(oldTag: HtmlElement, name: String, configure: HtmlTag.Builder.() -> Unit) {
+        override fun replaceTag(
+            oldTag: HtmlElement,
+            name: String,
+            configure: HtmlTag.Builder.() -> Unit
+        ) {
             val tag = Builder(name).apply(configure).build()
             childElements -= oldTag
             childElements += tag

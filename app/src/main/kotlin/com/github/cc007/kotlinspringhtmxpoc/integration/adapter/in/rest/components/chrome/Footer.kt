@@ -1,6 +1,7 @@
 package com.github.cc007.kotlinspringhtmxpoc.integration.adapter.`in`.rest.components.chrome
 
 import com.github.cc007.dsl.html.HtmlTag
+import com.github.cc007.dsl.html.attr.classes
 import com.github.cc007.dsl.html.tag.body.footer
 import com.github.cc007.kotlinspringhtmxpoc.integration.adapter.`in`.rest.components.common.hxGet
 import com.github.cc007.kotlinspringhtmxpoc.integration.adapter.`in`.rest.components.content.REF_CONTENT
@@ -15,7 +16,7 @@ import com.github.cc007.kotlinspringhtmxpoc.integration.adapter.`in`.rest.compon
 //</div>
 fun HtmlTag.Builder.Footer() {
     footer {
-        //classes("bg-zinc-50", "px-2", "py-1", "shrink-0")
+        classes("bg-zinc-100", "px-2", "py-1", "shrink-0")
         hxGet(href = "/tos", target = REF_CONTENT) {
             attribute("preload" to "mouseover")
             text("Terms of Service")
