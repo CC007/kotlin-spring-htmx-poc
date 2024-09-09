@@ -7,23 +7,50 @@ import com.github.cc007.kotlinspringhtmxpoc.integration.adapter.`in`.rest.compon
 import com.github.cc007.kotlinspringhtmxpoc.integration.adapter.`in`.rest.components.Page
 import jakarta.servlet.http.HttpServletRequest
 
-fun HttpServletRequest.response(title: String, content: BuilderWithTags.() -> Unit): String {
+private data object RequestModel {
+    val models: MutableMap<HttpServletRequest, MutableMap<String, Any?>> = mutableMapOf()
+}
+
+context(HttpServletRequest)
+val model: MutableMap<String, Any?> get() = getRequestModel()
+
+context(HttpServletRequest)
+fun clearModel() = clearRequestModel()
+
+private fun HttpServletRequest.getRequestModel(): MutableMap<String, Any?> =
+    RequestModel.models.getOrPut(this) { mutableMapOf() }
+
+private fun HttpServletRequest.clearRequestModel() {
+    RequestModel.models.remove(this)
+}
+
+fun withRequest(request: HttpServletRequest, block: HttpServletRequest.() -> String): String = with(request) {
+    val result = block()
+    clearModel()
+    return result
+}
+
+context(HttpServletRequest)
+fun response(content: BuilderWithTags.() -> Unit): String {
     return if (isHtmxRequest()) {
-        htmxResponse(title, content)
+        htmxResponse(content)
     } else {
-        pageResponse(title, content)
+        pageResponse(content)
     }.also { println(it) }
 }
 
-private fun HttpServletRequest.isHtmxRequest(): Boolean {
+context(HttpServletRequest)
+private fun isHtmxRequest(): Boolean {
     val hxRequestHeader = getHeader("HX-Request") ?: "false"
     return hxRequestHeader == "true"
 }
 
-private fun htmxResponse(title: String, content: BuilderWithTags.() -> Unit) = noRoot {
-    Htmx(title, content)
+context(HttpServletRequest)
+private fun htmxResponse(content: BuilderWithTags.() -> Unit) = noRoot {
+    Htmx(content)
 }
 
-private fun pageResponse(title: String, content: BuilderWithTags.() -> Unit) = html {
-    Page(title, content)
+context(HttpServletRequest)
+private fun pageResponse(content: BuilderWithTags.() -> Unit) = html {
+    Page(content)
 }
