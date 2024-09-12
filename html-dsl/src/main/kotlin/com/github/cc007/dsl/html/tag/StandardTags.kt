@@ -27,6 +27,8 @@ object body {
     val BuilderWithTags.header by BuilderDelegate
     val BuilderWithTags.section by BuilderDelegate
     val BuilderWithTags.footer by BuilderDelegate
+    val BuilderWithTags.ul by BuilderDelegate
+    val BuilderWithTags.li by BuilderDelegate
 
     val BuilderWithTags.br by SelfClosingBuilderDelegate
     val BuilderWithTags.img by SelfClosingBuilderDelegate

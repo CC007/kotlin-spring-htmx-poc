@@ -17,9 +17,7 @@ class Home {
     fun home(request: HttpServletRequest): String = withRequest(request) {
         model["title"] = "Homepage"
         response {
-            p {
-                text("Lorum ipsum dolor...")
-            }
+            p { text("Lorum ipsum dolor...") }
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.github.cc007.kotlinspringhtmxpoc.integration.adapter.`in`.rest.components
 
 import com.github.cc007.dsl.html.HtmlTag
+import com.github.cc007.dsl.html.HtmlTag.Builder
 import com.github.cc007.dsl.html.attr.classes
 import com.github.cc007.dsl.html.attr.id
 import com.github.cc007.dsl.html.tag.body
@@ -16,7 +17,7 @@ import com.github.cc007.kotlinspringhtmxpoc.utils.model
 import jakarta.servlet.http.HttpServletRequest
 
 context(HttpServletRequest)
-fun HtmlTag.Builder.Page(content: HtmlTag.Builder.() -> Unit) {
+fun Builder.Page(content: Builder.() -> Unit) {
     attribute("lang" to "en")
     head {
         meta { attribute("charset" to "UTF-8") }

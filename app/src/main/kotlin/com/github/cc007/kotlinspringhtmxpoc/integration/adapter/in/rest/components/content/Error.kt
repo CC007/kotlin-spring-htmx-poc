@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseBody
 
 @Controller
-class CustomErrorController : ErrorController {
+class Error : ErrorController {
 //    private val menuItemService: MenuItemService? = null
 
     @RequestMapping("/error")
