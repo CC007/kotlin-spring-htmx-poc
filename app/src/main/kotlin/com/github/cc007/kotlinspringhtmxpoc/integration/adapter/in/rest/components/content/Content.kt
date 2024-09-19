@@ -24,6 +24,7 @@ class Content {
             val contentPageType = fromPage(page)
                 ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
             model["title"] = contentPageType.title
+            model["contentPage"] = contentPageType
             response {
                 val pageContent = contentPageType.pageContent
                 pageContent()

@@ -8,13 +8,10 @@ import com.github.cc007.dsl.html.tag.body.header
 import com.github.cc007.dsl.html.tag.body.img
 import com.github.cc007.kotlinspringhtmxpoc.integration.adapter.`in`.rest.components.common.hxGet
 import com.github.cc007.kotlinspringhtmxpoc.integration.adapter.`in`.rest.components.content.REF_CONTENT
+import jakarta.servlet.http.HttpServletRequest
 
-//<div class="bg-zinc-50 px-2 py-1 shrink-0 flex justify-center items-center">
-//  <div id="logo"><@a href="/" otherParams=' preload="mouseover"'><img src="/images/logo.png" alt="${logo}"></@a></div>
-//  <div id="menu">
-//      <#include "header/menu.ftl">
-//  </div>
-//</div>
+
+context(HttpServletRequest)
 fun HtmlTag.Builder.Header() {
     header {
         classes("bg-zinc-100", "px-2", "py-1", "shrink-0", "flex", "gap-5", "justify-start", "items-center")

@@ -3,12 +3,12 @@ package com.github.cc007.kotlinspringhtmxpoc.integration.adapter.`in`.rest.compo
 import com.github.cc007.dsl.html.HtmlTag.Builder
 import com.github.cc007.dsl.html.attr.classes
 import com.github.cc007.kotlinspringhtmxpoc.integration.adapter.`in`.rest.components.common.hxGet
+import com.github.cc007.kotlinspringhtmxpoc.integration.adapter.`in`.rest.components.content.ContentPageType
 import com.github.cc007.kotlinspringhtmxpoc.integration.adapter.`in`.rest.components.content.REF_CONTENT
+import com.github.cc007.kotlinspringhtmxpoc.utils.model
+import jakarta.servlet.http.HttpServletRequest
 
-//<#list menuItems as menuItem>
-//  <#assign activeParam=(menuItem.active?? && menuItem.active)?then(' class="active"','') >
-//  <@a href="${menuItem.url}" otherParams=(activeParam + ' preload="mouseover"')>${menuItem.name}</@a>
-//</#list>
+context(HttpServletRequest)
 fun Builder.Menu() {
     classes("bg-zinc-200", "rounded", "p-1", "flex", "items-center")
     for (menuItem in getMenuItems()) {
@@ -27,6 +27,9 @@ data class MenuItem (
     val active: Boolean,
 )
 
+context(HttpServletRequest)
 fun getMenuItems(): List<MenuItem> {
-    return listOf(MenuItem("Home", "/", true))
+    return ContentPageType.entries.map {
+        MenuItem(it.title,"/${it.page}", it == model["contentPage"])
+    }
 }
