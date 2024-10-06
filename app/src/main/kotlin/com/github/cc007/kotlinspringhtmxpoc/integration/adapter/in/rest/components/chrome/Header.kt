@@ -1,8 +1,10 @@
 package com.github.cc007.kotlinspringhtmxpoc.integration.adapter.`in`.rest.components.chrome
 
 import com.github.cc007.dsl.html.HtmlTag
+import com.github.cc007.dsl.html.attr.alt
 import com.github.cc007.dsl.html.attr.classes
 import com.github.cc007.dsl.html.attr.id
+import com.github.cc007.dsl.html.attr.src
 import com.github.cc007.dsl.html.tag.body.div
 import com.github.cc007.dsl.html.tag.body.header
 import com.github.cc007.dsl.html.tag.body.img
@@ -24,8 +26,8 @@ fun HtmlTag.Builder.Header() {
                 attribute("preload" to "mouseover")
                 img {
                     classes("w-auto", "h-full", "rounded")
-                    attribute("src" to "/images/logo.png")
-                    attribute("alt" to "CC007's logo")
+                    src("/images/logo.png")
+                    alt("CC007's logo")
                 }
             }
         }

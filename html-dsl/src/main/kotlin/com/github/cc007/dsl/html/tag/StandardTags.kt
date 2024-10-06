@@ -2,6 +2,8 @@ package com.github.cc007.dsl.html.tag
 
 import com.github.cc007.dsl.html.*
 import com.github.cc007.dsl.html.HtmlTag.Builder
+import com.github.cc007.dsl.html.attr.href
+import com.github.cc007.dsl.html.attr.src
 
 val BuilderWithTags.script get() = scriptWithSrc()
 
@@ -40,7 +42,7 @@ object body {
 private fun BuilderWithTags.aWithHref() =
     InvokableWithHref { href, configure ->
         tag("a") {
-            attribute("href" to href)
+            href(href)
             configure()
         }
     }
@@ -49,7 +51,7 @@ private fun BuilderWithTags.cssLinkWithHref() =
     InvokableWithHrefNoConf { href ->
         tag("link") {
             attribute("rel" to "stylesheet")
-            attribute("href" to href)
+            href(href)
         }
     }
 
@@ -73,7 +75,7 @@ private fun BuilderWithTags.scriptWithSrc() =
             configure: Builder.() -> Unit,
         ) {
             tag("script") {
-                attribute("src" to src)
+                src(src)
                 configure()
             }
         }
