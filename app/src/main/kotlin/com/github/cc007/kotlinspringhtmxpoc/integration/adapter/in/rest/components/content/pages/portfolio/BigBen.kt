@@ -9,7 +9,6 @@ import com.github.cc007.dsl.html.tag.body.h5
 import com.github.cc007.dsl.html.tag.body.h6
 import com.github.cc007.dsl.html.tag.body.img
 import com.github.cc007.dsl.html.tag.body.p
-import com.github.cc007.kotlinspringhtmxpoc.utils.model
 import jakarta.servlet.http.HttpServletRequest
 import java.text.SimpleDateFormat
 import java.time.Instant
@@ -21,36 +20,46 @@ fun BuilderWithTags.BigBen() {
     val rawTime = getParameter("timestamp")
         ?.toLong()
         ?.let(Instant::ofEpochSecond) ?: Instant.now()
-    model["timestamp"] = rawTime
+    val timestamp = rawTime
         .atZone(ZoneOffset.UTC)
         .withMinute(0)
         .withSecond(0)
         .toInstant()
 
-    model["offset"] = getParameter("offset")
-        ?.toLong()
-        ?: 0L
     val postCount = getParameter("viewportHeight")
         ?.toInt()
         ?.let { it / HEIGHT_PER_POST }
         ?: 20
-    if (model["showDescription"] == true) {
+
+    val offset = getParameter("offset")
+        ?.toLong()
+        ?: 0L
+    val nextOffset = offset + postCount
+
+    if (getParameter("showDescription")?.toBoolean() == true) {
         p { text("This is an example to demonstrate dynamic loading of content") }
     }
     for (postNr in 0 until postCount) {
-        post(postNr, postCount)
+        post(postNr, postCount, timestamp, offset, nextOffset)
     }
-    // TODO
-    // <#if postCount gt 0>
-    //   <div hx-trigger="intersect once" hx-swap="outerHTML" hx-get="/bigben?offset=${nextOffset}&timestamp=${timestamp?c}">Load more...</div>
-    // </#if>
+    if (postCount > 0) {
+        div {
+            attribute("hx-trigger" to "intersect once")
+            attribute("hx-swap" to "outerHTML")
+            attribute("hx-get" to "/portfolio/bigben?offset=$nextOffset&timestamp=${timestamp.epochSecond}")
+            text("Load more...")
+        }
+    }
 }
 
 context(HttpServletRequest)
-private fun BuilderWithTags.post(postNr: Int, postCount: Int) {
-    val timestamp = model["timestamp"] as Instant
-    val offset = model["offset"] as Long
-    val nextOffset = offset + postCount
+private fun BuilderWithTags.post(
+    postNr: Int,
+    postCount: Int,
+    timestamp: Instant,
+    offset: Long,
+    nextOffset: Long
+) {
 
     div {
         classes("max-w-xl", "w-full", "m-5", "shadow-md")
