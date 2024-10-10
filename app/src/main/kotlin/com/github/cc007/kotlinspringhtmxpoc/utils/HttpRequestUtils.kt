@@ -36,7 +36,7 @@ fun response(content: BuilderWithTags.() -> Unit): String {
         htmxResponse(content)
     } else {
         pageResponse(content)
-    }.also { println(it) }
+    }//.also { println(it) }
 }
 
 context(HttpServletRequest)

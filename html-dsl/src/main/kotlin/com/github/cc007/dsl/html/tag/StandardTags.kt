@@ -34,6 +34,7 @@ object body {
     val BuilderWithTags.img by SelfClosingBuilderDelegate
 
     val BuilderWithTags.a get() = aWithHref()
+    val BuilderWithTags.button get() = buttonWithType()
 
 }
 
@@ -41,6 +42,20 @@ private fun BuilderWithTags.aWithHref() =
     InvokableWithHref { href, configure ->
         tag("a") {
             attribute("href" to href)
+            configure()
+        }
+    }
+
+
+enum class ButtonType(val value: String) {
+    SUBMIT("submit"),
+    RESET("reset"),
+    BUTTON("button"),
+}
+private fun BuilderWithTags.buttonWithType() =
+    InvokableWithType<ButtonType> { type: ButtonType?, configure ->
+        tag("button") {
+            if (type != null) attribute("type" to type.value)
             configure()
         }
     }

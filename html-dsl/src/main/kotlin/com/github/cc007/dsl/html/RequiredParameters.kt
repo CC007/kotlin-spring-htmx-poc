@@ -23,6 +23,13 @@ fun interface InvokableWithHref {
         configure: Builder.() -> Unit,
     )
 }
+fun interface InvokableWithType<T> {
+    operator fun invoke(
+        type: T?,
+        configure: Builder.() -> Unit,
+    )
+}
+
 fun interface InvokableWithHrefNoConf {
     operator fun invoke(
         href: String

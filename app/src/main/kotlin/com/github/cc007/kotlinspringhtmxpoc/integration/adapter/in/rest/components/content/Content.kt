@@ -19,7 +19,7 @@ import org.springframework.web.server.ResponseStatusException
 class Content {
     @GetMapping("/{page}")
     @ResponseBody
-    fun home(request: HttpServletRequest, @PathVariable("page") page: String): String =
+    fun contentPage(request: HttpServletRequest, @PathVariable("page") page: String): String =
         withRequest(request) {
             val contentPageType = fromPage(page)
                 ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
