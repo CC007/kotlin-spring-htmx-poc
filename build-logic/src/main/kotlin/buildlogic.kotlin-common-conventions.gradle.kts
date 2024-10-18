@@ -26,7 +26,10 @@ java {
 
 kotlin {
     compilerOptions {
-        freeCompilerArgs.addAll("-Xjsr305=strict")
+        freeCompilerArgs.addAll(
+            "-Xcontext-receivers",
+            "-Xjsr305=strict",
+        )
     }
 }
 
